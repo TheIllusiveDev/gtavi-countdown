@@ -1,0 +1,14 @@
+# Normalise line endings to LF in the repository and the working tree,
+# regardless of the contributor's core.autocrlf setting.
+* text=auto eol=lf
+
+# Binary assets
+*.png  binary
+*.jpg  binary
+*.ico  binary
+*.icns binary
+*.woff2 binary
+
+# Generated lock files: keep them out of language statistics and diffs terse.
+bun.lock   linguist-generated
+Cargo.lock linguist-generated

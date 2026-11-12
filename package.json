@@ -1,0 +1,34 @@
+{
+  "name": "gtavi-countdown",
+  "version": "1.0.0",
+  "description": "A fast, animated countdown to the release of Grand Theft Auto VI for the web and the desktop.",
+  "license": "GPL-3.0-only",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "bun test",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@tauri-apps/api": "^2.12.4",
+    "@tauri-apps/plugin-notification": "^2.8.1",
+    "@tauri-apps/plugin-window-state": "^2.5.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tauri-apps/cli": "^2.12.4",
+    "@types/bun": "^1.4.4",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8",
+    "typescript": "^6.0.0",
+    "vite": "^8.3.8"
+  }
+}

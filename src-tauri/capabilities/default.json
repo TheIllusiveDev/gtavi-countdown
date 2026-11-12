@@ -1,0 +1,14 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissions granted to the main window. The app only needs to toggle two window states, send notifications and persist the window geometry.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-set-always-on-top",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-is-fullscreen",
+    "notification:default",
+    "window-state:default"
+  ]
+}

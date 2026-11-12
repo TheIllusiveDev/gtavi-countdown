@@ -1,0 +1,60 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "GTA VI Countdown",
+  "version": "1.0.0",
+  "identifier": "app.gtavi.countdown",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "GTA VI Countdown",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 360,
+        "minHeight": 240,
+        "center": true,
+        "backgroundColor": "#120a30"
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self'",
+        "script-src": "'self'",
+        "style-src": "'self' 'unsafe-inline'",
+        "img-src": "'self' data:",
+        "font-src": "'self'",
+        "connect-src": "ipc: http://ipc.localhost"
+      },
+      "devCsp": {
+        "default-src": "'self'",
+        "script-src": "'self' 'unsafe-inline'",
+        "style-src": "'self' 'unsafe-inline'",
+        "img-src": "'self' data:",
+        "font-src": "'self'",
+        "connect-src": "ipc: http://ipc.localhost http://localhost:1420 ws://localhost:1420"
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Utility",
+    "shortDescription": "Countdown to Grand Theft Auto VI",
+    "longDescription": "A fast, animated countdown to the release of Grand Theft Auto VI, with per-time-zone unlock times, network time correction and a release notification.",
+    "copyright": "Copyright (C) 2026 Luka Brdar",
+    "license": "GPL-3.0-only",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

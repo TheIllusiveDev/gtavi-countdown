@@ -1,0 +1,38 @@
+[workspace]
+members = [".", "crates/timesync"]
+resolver = "2"
+
+[package]
+name = "gtavi-countdown"
+version = "1.0.0"
+description = "A fast, animated countdown to the release of Grand Theft Auto VI."
+authors = ["Luka Brdar"]
+license = "GPL-3.0-only"
+edition = "2021"
+rust-version = "1.77.2"
+publish = false
+
+[lib]
+# The `_lib` suffix keeps the library name distinct from the binary name,
+# which Cargo requires on Windows.
+name = "gtavi_countdown_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-notification = "2"
+tauri-plugin-window-state = "2"
+serde = { version = "1", features = ["derive"] }
+timesync = { path = "crates/timesync" }
+
+[profile.release]
+# Optimise the shipped binary for size: one codegen unit and link-time
+# optimisation let the compiler discard everything the app does not call.
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
