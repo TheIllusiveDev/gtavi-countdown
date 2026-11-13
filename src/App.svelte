@@ -9,12 +9,15 @@
   import type { Composition } from "./lib/gl/scene";
   import { buildCalendar } from "./lib/ics";
   import {
+    canFullscreen,
+    canShare,
     copyText,
     isDesktop,
     notify,
     requestNotificationPermission,
     saveCalendar,
     setAlwaysOnTop,
+    shareText,
     syncNetworkTime,
     toggleFullscreen,
   } from "./lib/platform";
@@ -251,6 +254,11 @@
     const text = now.elapsed
       ? `${RELEASE.title} has been out for ${formatCompact(now)}.`
       : `${RELEASE.title} unlocks in ${formatCompact(now)} (${targetDate} at ${targetTime}, ${zoneText}).`;
+    // Phones get the system share sheet; a dismissed sheet needs no message.
+    if (canShare) {
+      const outcome = await shareText("GTA VI Countdown", text);
+      if (outcome !== "failed") return;
+    }
     showToast((await copyText(text)) ? "Countdown copied to the clipboard." : "Copying failed.");
   }
 
@@ -306,6 +314,7 @@
 <div class="shell">
   <header class="bar">
     <div class="brand">
+      <img class="brand-mark" src="./favicon.svg" alt="" width="26" height="26" />
       <span class="brand-name">GTA VI</span>
       <span class="brand-sub">Countdown</span>
     </div>
@@ -315,10 +324,17 @@
         <Icon name="calendar" />
         <span class="visually-hidden">Add to calendar</span>
       </button>
-      <button type="button" class="tool" onclick={onCopy} title="Copy the countdown (C)">
-        <Icon name="copy" />
-        <span class="visually-hidden">Copy the countdown</span>
-      </button>
+      {#if canShare}
+        <button type="button" class="tool" onclick={onCopy} title="Share the countdown">
+          <Icon name="share" />
+          <span class="visually-hidden">Share the countdown</span>
+        </button>
+      {:else}
+        <button type="button" class="tool" onclick={onCopy} title="Copy the countdown (C)">
+          <Icon name="copy" />
+          <span class="visually-hidden">Copy the countdown</span>
+        </button>
+      {/if}
       {#if isDesktop}
         <button
           type="button"
@@ -331,10 +347,12 @@
           <span class="visually-hidden">Always on top</span>
         </button>
       {/if}
-      <button type="button" class="tool" onclick={onFullscreen} title="Toggle fullscreen (F)">
-        <Icon name={fullscreen ? "compress" : "expand"} />
-        <span class="visually-hidden">Toggle fullscreen</span>
-      </button>
+      {#if canFullscreen}
+        <button type="button" class="tool" onclick={onFullscreen} title="Toggle fullscreen (F)">
+          <Icon name={fullscreen ? "compress" : "expand"} />
+          <span class="visually-hidden">Toggle fullscreen</span>
+        </button>
+      {/if}
       <button
         type="button"
         class="tool"
@@ -367,6 +385,7 @@
           title="Change the time zone"
         >
           {zoneText}
+          <Icon name="chevron" size={14} />
         </button>
       </p>
       {#if localEquivalent}
@@ -437,9 +456,17 @@
 
   .brand {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 9px;
     white-space: nowrap;
+  }
+
+  .brand-mark {
+    display: block;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    box-shadow: 0 2px 10px rgb(var(--scrim) / 0.6);
   }
 
   .brand-name {
@@ -471,19 +498,37 @@
     background: var(--panel);
     border: 1px solid var(--line);
     color: var(--ink-soft);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     transition:
       color 140ms ease,
       border-color 140ms ease,
+      background-color 140ms ease,
       transform 140ms ease;
   }
 
-  .tool:hover {
-    color: var(--ink);
-    border-color: var(--line-strong);
+  @media (hover: hover) {
+    .tool:hover {
+      color: var(--ink);
+      border-color: var(--line-strong);
+      background: rgb(255 255 255 / 0.1);
+    }
+
+    .zone:hover {
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
   }
 
   .tool:active {
     transform: scale(0.94);
+  }
+
+  @media (pointer: coarse) {
+    .tool {
+      width: 44px;
+      height: 44px;
+    }
   }
 
   .tool[aria-pressed="true"] {
@@ -547,7 +592,10 @@
   }
 
   .zone {
-    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px 4px 12px;
     border-radius: 999px;
     background: var(--panel);
     border: 1px solid var(--line);
@@ -561,9 +609,8 @@
       border-color 140ms ease;
   }
 
-  .zone:hover {
-    color: var(--ink);
-    border-color: var(--line-strong);
+  .zone :global(svg) {
+    opacity: 0.7;
   }
 
   .local {
@@ -587,8 +634,13 @@
   .details {
     width: min(100%, 980px);
     border-radius: var(--radius);
-    background: var(--panel);
+    /* A faint sheen along the top edge lifts the panel off the water. */
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0) 120px), var(--panel);
     border: 1px solid var(--line);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 24px 60px rgb(0 0 0 / 0.28);
     overflow: hidden;
   }
 
@@ -603,6 +655,7 @@
     padding-bottom: max(16px, env(safe-area-inset-bottom));
     font-size: 0.75rem;
     color: var(--ink-faint);
+    text-wrap: balance;
   }
 
   .clock-source {
@@ -616,10 +669,32 @@
   @media (max-width: 640px) {
     footer {
       flex-direction: column;
+      text-align: center;
+      align-items: center;
+      gap: 6px;
     }
 
     .brand-sub {
       display: none;
+    }
+
+    .tools {
+      gap: 8px;
+    }
+
+    main {
+      /* Phones scroll, so the sun gap can be generous without crowding. */
+      gap: clamp(96px, 18vh, 170px);
+      padding-top: clamp(20px, 5vh, 48px);
+    }
+
+    .when {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .details {
+      border-radius: 18px;
     }
   }
 
@@ -628,7 +703,7 @@
   .toast {
     position: fixed;
     left: 50%;
-    bottom: 56px;
+    bottom: calc(56px + env(safe-area-inset-bottom));
     z-index: 20;
     max-width: min(92vw, 560px);
     padding: 10px 18px;

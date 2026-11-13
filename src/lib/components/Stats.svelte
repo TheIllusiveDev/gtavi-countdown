@@ -33,6 +33,7 @@
   .stats {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
     /* Clips the dividers that fall on the outer edge. */
     overflow: hidden;
   }
@@ -71,6 +72,24 @@
 
     .tile:nth-child(-n + 2) {
       grid-column: span 3;
+    }
+  }
+
+  /* Phones: two columns, so the "Total ..." labels stay on one line. The
+     largest figure, total seconds, takes the full last row. */
+  @media (max-width: 520px) {
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tile,
+    .tile:nth-child(-n + 2) {
+      grid-column: span 1;
+      padding: 12px 16px 11px;
+    }
+
+    .tile:last-child {
+      grid-column: 1 / -1;
     }
   }
 </style>

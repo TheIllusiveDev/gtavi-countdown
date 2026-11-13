@@ -12,7 +12,7 @@
   import Icon from "./Icon.svelte";
   import Switch from "./Switch.svelte";
   import ZonePicker from "./ZonePicker.svelte";
-  import { isDesktop } from "../platform";
+  import { isDesktop, isTouch } from "../platform";
   import { EFFECT_LEVELS, THEMES, settings, type EffectLevel } from "../settings.svelte";
   import { THEME_INFO } from "../themes";
 
@@ -198,17 +198,19 @@
         </section>
       {/if}
 
-      <section>
-        <h3 class="label">Keyboard shortcuts</h3>
-        <dl class="shortcuts">
-          {#each SHORTCUTS as [key, action] (key)}
-            <div>
-              <dt><kbd>{key}</kbd></dt>
-              <dd>{action}</dd>
-            </div>
-          {/each}
-        </dl>
-      </section>
+      {#if !isTouch}
+        <section>
+          <h3 class="label">Keyboard shortcuts</h3>
+          <dl class="shortcuts">
+            {#each SHORTCUTS as [key, action] (key)}
+              <div>
+                <dt><kbd>{key}</kbd></dt>
+                <dd>{action}</dd>
+              </div>
+            {/each}
+          </dl>
+        </section>
+      {/if}
 
       <section class="reset">
         <button type="button" class="button" onclick={() => settings.reset()}>
@@ -270,6 +272,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 18px 20px 14px 24px;
+    padding-top: max(18px, env(safe-area-inset-top));
     border-bottom: 1px solid var(--line);
   }
 
@@ -289,9 +292,62 @@
     color: var(--ink-soft);
   }
 
-  .close:hover {
-    background: rgb(255 255 255 / 0.1);
-    color: var(--ink);
+  @media (hover: hover) {
+    .close:hover {
+      background: rgb(255 255 255 / 0.1);
+      color: var(--ink);
+    }
+
+    .theme:hover {
+      border-color: var(--line-strong);
+    }
+
+    .button:hover:not(:disabled) {
+      background: rgb(255 255 255 / 0.1);
+    }
+  }
+
+  /* Phones: the sheet rises from the bottom and leaves a strip of the
+     countdown visible above it, which also reads as "tap here to close". */
+  @media (max-width: 520px) {
+    dialog {
+      inset: auto 0 0 0;
+      width: 100vw;
+      height: min(88dvh, 100dvh - 56px);
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -24px 60px rgb(0 0 0 / 0.35);
+    }
+
+    dialog[open] {
+      animation-name: slide-up;
+    }
+
+    header {
+      padding-top: 18px;
+    }
+
+    .sheet::before {
+      content: "";
+      align-self: center;
+      width: 40px;
+      height: 4px;
+      margin-top: 8px;
+      border-radius: 2px;
+      background: var(--line-strong);
+    }
+
+    .themes {
+      gap: 6px;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(40px);
+      opacity: 0;
+    }
   }
 
   .body {
@@ -299,6 +355,7 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 4px 24px 28px;
+    padding-bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px));
   }
 
   section {
@@ -356,10 +413,6 @@
     color: var(--ink-soft);
   }
 
-  .theme:hover {
-    border-color: var(--line-strong);
-  }
-
   .theme[aria-checked="true"] {
     border-color: var(--accent);
     color: var(--ink);
@@ -381,7 +434,7 @@
   }
 
   .segmented button {
-    height: 32px;
+    height: 34px;
     border-radius: 6px;
     font-size: 0.8125rem;
     font-weight: 500;
@@ -411,10 +464,6 @@
     border: 1px solid var(--line-strong);
     font-size: 0.8125rem;
     font-weight: 500;
-  }
-
-  .button:hover:not(:disabled) {
-    background: rgb(255 255 255 / 0.1);
   }
 
   .button:disabled {

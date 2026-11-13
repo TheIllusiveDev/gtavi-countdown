@@ -144,6 +144,18 @@
     white-space: nowrap;
   }
 
+  /* Phones: tighter spacing around the colons buys room for larger figures. */
+  @media (max-width: 520px) {
+    .countdown {
+      --size: clamp(3.4rem, min(19.5vw, 23vh), 12.75rem);
+      gap: calc(var(--size) * 0.04);
+    }
+
+    .countdown.with-millis {
+      --size: clamp(3rem, min(15vw, 23vh), 12.75rem);
+    }
+  }
+
   @keyframes pulse {
     0%,
     100% {

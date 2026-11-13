@@ -1,0 +1,5 @@
+# Cloudflare Pages project configuration, used by `bun run deploy`.
+# Change the name if it is taken on your account.
+name = "gtavi-countdown"
+compatibility_date = "2026-11-01"
+pages_build_output_dir = "./dist"

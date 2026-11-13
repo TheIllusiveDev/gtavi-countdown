@@ -1,0 +1,16 @@
+{
+  "name": "GTA VI Countdown",
+  "short_name": "GTA VI",
+  "description": "A live countdown to the release of Grand Theft Auto VI on November 19, 2026.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#170b2e",
+  "theme_color": "#170b2e",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

@@ -10,6 +10,37 @@
 export const isDesktop: boolean =
   typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 
+/**
+ * True on phones and tablets: no hover and a coarse pointer. Used to swap
+ * desktop affordances (copy, fullscreen, shortcuts) for touch ones.
+ */
+export const isTouch: boolean =
+  typeof matchMedia === "function" && matchMedia("(hover: none) and (pointer: coarse)").matches;
+
+/** False where the page cannot go fullscreen, notably Safari on the iPhone. */
+export const canFullscreen: boolean =
+  isDesktop || (typeof document !== "undefined" && document.fullscreenEnabled === true);
+
+/** True where the system share sheet is available and preferable to copying. */
+export const canShare: boolean =
+  !isDesktop && isTouch && typeof navigator !== "undefined" && typeof navigator.share === "function";
+
+/**
+ * Opens the system share sheet. Resolves to "shared", "cancelled" when the
+ * user dismissed it, or "failed".
+ */
+export async function shareText(
+  title: string,
+  text: string,
+): Promise<"shared" | "cancelled" | "failed"> {
+  try {
+    await navigator.share({ title, text, url: location.href });
+    return "shared";
+  } catch (error) {
+    return error instanceof DOMException && error.name === "AbortError" ? "cancelled" : "failed";
+  }
+}
+
 export interface TimeSync {
   /** Milliseconds to add to the system clock to obtain network time. */
   offsetMs: number;

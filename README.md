@@ -56,6 +56,30 @@ bun run preview
 
 The output in `dist/` is a static site. It uses relative asset URLs and can be served from any path on any static host.
 
+## Deploying to Cloudflare Pages
+
+**From the command line.** Log in once, then build and upload in one step:
+
+```sh
+bunx wrangler login
+bun run deploy
+```
+
+The first deploy creates a Pages project named `gtavi-countdown` (set in `wrangler.toml`; change it if the name is taken). `bun run pages:dev` serves the build locally through Wrangler, with the same headers as production.
+
+**From Git.** In the Cloudflare dashboard, create a Pages project connected to the repository and use:
+
+| Setting | Value |
+| --- | --- |
+| Framework preset | None |
+| Build command | `bun run build` |
+| Build output directory | `dist` |
+| Environment variable | `BUN_VERSION` = `1.4.4` |
+
+`public/_headers` is copied into the build and sets the content security policy, long-lived caching for the hashed files in `assets/`, and a few security headers.
+
+The site also works as an installable web app: it ships a web manifest and home-screen icons for iOS and Android.
+
 ## Desktop application
 
 ### System dependencies

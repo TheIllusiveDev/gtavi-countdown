@@ -150,6 +150,21 @@
     font-size: 0.875rem;
   }
 
+  /* iOS zooms the page into any focused field under 16px. */
+  @media (pointer: coarse) {
+    input {
+      font-size: 16px;
+    }
+
+    .search {
+      height: 44px;
+    }
+
+    .option {
+      min-height: 44px;
+    }
+  }
+
   input::placeholder {
     color: var(--ink-faint);
   }
@@ -184,8 +199,10 @@
     text-align: left;
   }
 
-  .option:hover {
-    background: rgb(255 255 255 / 0.08);
+  @media (hover: hover) {
+    .option:hover {
+      background: rgb(255 255 255 / 0.08);
+    }
   }
 
   .option[aria-pressed="true"] {

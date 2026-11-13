@@ -8,6 +8,8 @@
     calendar: "M5 6h14v14H5zM5 10h14M9 3.5v4M15 3.5v4",
     copy: "M9 9h11v11H9zM5 15H4V4h11v1",
     close: "M6 6l12 12M18 6L6 18",
+    share: "M12 15V4M8 8l4-4 4 4M8.5 11H6v9h12v-9h-2.5",
+    chevron: "M8 10l4 4 4-4",
     check: "M5 12.5l4.5 4.5L19 7.5",
     sync: "M20 11a8 8 0 0 0-14.5-4M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4M20 20v-3.5h-3.5",
     search: "M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14ZM20 20l-4-4",

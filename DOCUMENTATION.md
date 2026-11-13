@@ -353,7 +353,9 @@ The command also produces mobile and Windows Store variants; only the desktop ic
 
 `bun run desktop:build` produces the installers appropriate to the host platform: `.deb`, `.rpm` and AppImage on Linux, `.msi` and NSIS on Windows, `.app` and `.dmg` on macOS. Installers are built for the host platform, so build on the platform you are targeting. The bundle identifier, `app.gtavi.countdown`, is set in `tauri.conf.json` and should be changed to a domain you control before distributing builds.
 
-The web build in `dist/` can be deployed to any static host as it is.
+The web build in `dist/` can be deployed to any static host as it is. For Cloudflare Pages, `bun run deploy` builds and uploads it with Wrangler (configured in `wrangler.toml`), and `public/_headers` supplies the response headers; the README has the dashboard settings for Git-based deploys.
+
+The home-screen icons in `public/icons/` are square, full-bleed renders of `src-tauri/app-icon.svg` (iOS and Android apply their own mask).
 
 ## 10. Performance
 

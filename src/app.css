@@ -132,6 +132,9 @@ select {
 
 button {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  /* Removes the double-tap-to-zoom delay on touch screens. */
+  touch-action: manipulation;
   border: 0;
   background: none;
   padding: 0;
