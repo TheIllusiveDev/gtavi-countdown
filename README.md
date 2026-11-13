@@ -38,8 +38,8 @@ A fast, animated countdown to the release of Grand Theft Auto VI on November 19,
 
 ## Requirements
 
-- Bun 1.4 or later.
-- For the desktop application only: a Rust toolchain (1.77.2 or later) and the Tauri system dependencies for your platform, listed under [Desktop application](#desktop-application).
+- [Bun](https://bun.com/docs/installation) 1.4 or later. Install it with `curl -fsSL https://bun.com/install | bash`, or see the [installation guide](https://bun.com/docs/installation) for other methods.
+- For the desktop application only: a Rust toolchain (1.77.2 or later) and the Tauri system dependencies for your platform. The commands under [System dependencies](#system-dependencies) install both.
 
 ## Getting started
 
@@ -87,24 +87,58 @@ The site also works as an installable web app: it ships a web manifest and home-
 
 ### System dependencies
 
+Each command below installs Rust together with the libraries Tauri needs. Bun is installed separately, see [Requirements](#requirements).
+
+**Fedora**
+
+```sh
+sudo dnf install rust cargo \
+  webkit2gtk4.1-devel openssl-devel curl wget file \
+  libappindicator-gtk3-devel librsvg2-devel libxdo-devel
+sudo dnf group install c-development
+```
+
+**Arch Linux and Manjaro**
+
+```sh
+sudo pacman -Syu
+sudo pacman -S --needed rust base-devel \
+  webkit2gtk-4.1 curl wget file openssl appmenu-gtk-module \
+  libappindicator-gtk3 librsvg xdotool
+```
+
+If you already manage Rust with the `rustup` package, leave `rust` out of the list; the two conflict.
+
 **Debian and Ubuntu, including WSL 2**
 
 ```sh
 sudo apt update
-sudo apt install build-essential pkgconf curl wget file \
+sudo apt install rustc cargo build-essential pkgconf curl wget file \
   libwebkit2gtk-4.1-dev libxdo-dev libssl-dev \
   libayatana-appindicator3-dev librsvg2-dev
 ```
 
+Older releases, such as Debian 12, ship a Rust compiler older than 1.77.2. Check with `rustc --version`; if it is too old, drop `rustc cargo` from the command and install Rust with [rustup](https://rustup.rs) instead.
+
+**openSUSE**
+
+```sh
+sudo zypper refresh
+sudo zypper install rust cargo \
+  webkit2gtk3-devel libopenssl-devel curl wget file \
+  libappindicator3-1 librsvg-devel
+sudo zypper install -t pattern devel_basis
+```
+
 **Windows**
 
-Install the Microsoft C++ Build Tools. The WebView2 runtime is part of Windows 10 (version 1803 and later) and Windows 11.
+Install the Microsoft C++ Build Tools and Rust with [rustup](https://rustup.rs). The WebView2 runtime is part of Windows 10 (version 1803 and later) and Windows 11.
 
 **macOS**
 
-Install the Xcode Command Line Tools with `xcode-select --install`.
+Install the Xcode Command Line Tools with `xcode-select --install`, then Rust with [rustup](https://rustup.rs).
 
-Rust is installed with [rustup](https://rustup.rs) on every platform. The Tauri documentation keeps the authoritative list of [prerequisites](https://tauri.app/start/prerequisites/).
+On any platform, [rustup](https://rustup.rs) is an alternative to the distribution's Rust packages and always provides the latest stable toolchain. The Tauri documentation keeps the authoritative list of [prerequisites](https://tauri.app/start/prerequisites/).
 
 ### Running and building
 
@@ -176,6 +210,8 @@ Rockstar Games has announced the date. The unlock hour used here, midnight local
 ## Disclaimer
 
 This is an unofficial fan project. It is not affiliated with, endorsed by or sponsored by Rockstar Games or Take-Two Interactive Software. Grand Theft Auto and the names of its publishers are trademarks of their respective owners and are used here only to identify the game. The project contains no assets from the game; the artwork is generated procedurally.
+
+Grand Theft Auto, Grand Theft Auto VI, GTA and all related names, marks and content are © Rockstar Games, Inc. and Take-Two Interactive Software, Inc. All rights reserved. This project will be taken down or changed on request of the copyright or trademark holders.
 
 ## License
 
