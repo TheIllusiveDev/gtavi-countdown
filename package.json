@@ -2,7 +2,7 @@
   "name": "gtavi-countdown",
   "version": "1.0.0",
   "description": "A fast, animated countdown to the release of Grand Theft Auto VI for the web and the desktop.",
-  "license": "GPL-3.0-only",
+  "license": "Unlicense",
   "private": true,
   "type": "module",
   "scripts": {

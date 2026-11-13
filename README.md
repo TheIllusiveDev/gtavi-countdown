@@ -4,6 +4,9 @@ A fast, animated countdown to the release of Grand Theft Auto VI on November 19,
 
 ![The countdown in the Dusk theme](docs/screenshot.jpg)
 
+> [!WARNING]
+> **Made entirely by AI.** This project was built as a test of the programming capabilities of Claude Fable 5.2, with later changes by Claude Opus 5.5. All of the code and documentation was written by AI, with no hand-written code. It has not been audited, so **use it at your own risk**. It is in the public domain: anyone may copy it and use it however they wish (see [License](#license)).
+
 ## Features
 
 - **Accurate to the millisecond.** The display is derived from the wall clock on every tick, so it cannot drift, and each tick is scheduled on the exact boundary where the seconds value changes.
@@ -176,10 +179,8 @@ This is an unofficial fan project. It is not affiliated with, endorsed by or spo
 
 ## License
 
-Copyright (C) 2026 Luka Brdar
+Released into the public domain under [The Unlicense](LICENSE.md). Copy it, change it, ship it, sell it or reuse any part of it however you like, with or without credit.
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation.
+The software is provided as is, without warranty of any kind. See [LICENSE.md](LICENSE.md) for the full text.
 
-This program is distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose. See [LICENSE.md](LICENSE.md) for the full text of the license.
-
-The bundled typefaces, Archivo and JetBrains Mono, are distributed under the SIL Open Font License 1.1.
+The bundled typefaces, Archivo and JetBrains Mono, are not covered by the Unlicense; they are distributed under the SIL Open Font License 1.1.
