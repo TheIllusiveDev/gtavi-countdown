@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="dusk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#170b2e" />
+    <!-- Everything is local: no network access from the page at all. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'"
+    />
+    <base href="/" />
+    <link rel="stylesheet" href="_content/GtaviCountdown.UI/app.css" />
+    <link rel="stylesheet" href="gtavi-countdown.styles.css" />
+    <title>GTA VI Countdown</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #170b2e;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="blazor-error-ui" role="alert">
+      Something went wrong.
+      <a href="">Reload</a>
+      <span class="dismiss" aria-label="Dismiss">×</span>
+    </div>
+    <script src="_framework/blazor.webview.js"></script>
+  </body>
+</html>

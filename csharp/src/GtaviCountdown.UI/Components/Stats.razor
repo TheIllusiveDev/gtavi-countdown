@@ -1,0 +1,27 @@
+<section class="stats" aria-label="The remaining time in other units">
+    @foreach (var (key, label, value) in Tiles())
+    {
+        <div @key="key" class="tile">
+            <span class="value">@value</span>
+            <span class="label">@label</span>
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter] public long Now { get; set; }
+
+    [Parameter] public long Target { get; set; }
+
+    [Parameter, EditorRequired] public string TimeZone { get; set; } = "UTC";
+
+    private IEnumerable<(string Key, string Label, string Value)> Tiles()
+    {
+        var t = Countdown.Totals(Now, Target, TimeZone);
+        yield return ("sleeps", t.Sleeps == 1 ? "Sleep" : "Sleeps", Wording.Integer(t.Sleeps));
+        yield return ("weekends", t.Weekends == 1 ? "Weekend" : "Weekends", Wording.Integer(t.Weekends));
+        yield return ("hours", "Total hours", Wording.Integer(t.Hours));
+        yield return ("minutes", "Total minutes", Wording.Integer(t.Minutes));
+        yield return ("seconds", "Total seconds", Wording.Integer(t.Seconds));
+    }
+}

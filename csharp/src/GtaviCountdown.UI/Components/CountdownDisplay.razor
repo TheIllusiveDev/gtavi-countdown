@@ -1,0 +1,98 @@
+@implements IAsyncDisposable
+@inject BrowserInterop Browser
+
+<div class="@(ShowMilliseconds ? "countdown with-millis" : "countdown")" role="timer" aria-label="@Spoken">
+    @for (var index = 0; index < Units.Length; index++)
+    {
+        var unit = Units[index];
+        if (index > 0)
+        {
+            <span class="separator" aria-hidden="true"></span>
+        }
+        <div @key="unit.Key" class="unit">
+            <div class="digits">
+                @for (var position = 0; position < unit.Text.Length; position++)
+                {
+                    @* Keyed from the right, so a change in width (100 days to 99)
+                       removes a leading figure instead of rolling every one. *@
+                    <Digit @key="unit.Text.Length - position" Value="unit.Text[position]" />
+                }
+                @if (unit.Key == "seconds" && ShowMilliseconds)
+                {
+                    <span class="millis" aria-hidden="true">.<span @ref="_millis">000</span></span>
+                }
+            </div>
+            <div class="label unit-label" aria-hidden="true">@unit.Label</div>
+        </div>
+    }
+</div>
+
+@code {
+    private sealed record Unit(string Key, string Label, string Text);
+
+    private ElementReference _millis;
+    private IJSObjectReference? _millisLoop;
+    private (long Target, double Offset) _millisFor;
+
+    [Parameter] public Breakdown Parts { get; set; }
+
+    [Parameter] public long Target { get; set; }
+
+    [Parameter] public bool ShowMilliseconds { get; set; }
+
+    /// <summary>The clock correction, so that the readout agrees with the seconds.</summary>
+    [Parameter] public double ClockOffset { get; set; }
+
+    private Unit[] Units =>
+    [
+        new("days", Parts.Days == 1 ? "Day" : "Days", Pad(Parts.Days)),
+        new("hours", Parts.Hours == 1 ? "Hour" : "Hours", Pad(Parts.Hours)),
+        new("minutes", Parts.Minutes == 1 ? "Minute" : "Minutes", Pad(Parts.Minutes)),
+        new("seconds", Parts.Seconds == 1 ? "Second" : "Seconds", Pad(Parts.Seconds)),
+    ];
+
+    /// <summary>Spoken form for assistive technology; the animated digits are hidden.</summary>
+    private string Spoken =>
+        $"{Parts.Days} days, {Parts.Hours} hours, {Parts.Minutes} minutes" +
+        (Parts.Elapsed ? " since release" : " remaining");
+
+    private static string Pad(long value) => value.ToString("00", System.Globalization.CultureInfo.InvariantCulture);
+
+    // The milliseconds readout changes every frame. Rendering it from .NET
+    // would re-render sixty times a second, so the browser paints it from an
+    // animation frame and this component only starts and stops the loop.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ShowMilliseconds && _millisLoop is null)
+        {
+            _millisFor = (Target, ClockOffset);
+            _millisLoop = await Browser.StartMillisAsync(_millis, Target, ClockOffset);
+        }
+        else if (ShowMilliseconds && _millisLoop is not null && _millisFor != (Target, ClockOffset))
+        {
+            _millisFor = (Target, ClockOffset);
+            await _millisLoop.InvokeVoidAsync("update", Target, ClockOffset);
+        }
+        else if (!ShowMilliseconds && _millisLoop is not null)
+        {
+            await StopMillisAsync();
+        }
+    }
+
+    private async Task StopMillisAsync()
+    {
+        var loop = _millisLoop;
+        _millisLoop = null;
+        if (loop is null) return;
+        try
+        {
+            await loop.InvokeVoidAsync("stop");
+            await loop.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+
+    public async ValueTask DisposeAsync() => await StopMillisAsync();
+}

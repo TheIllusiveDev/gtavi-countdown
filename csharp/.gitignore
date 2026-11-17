@@ -1,0 +1,6 @@
+# .NET build output
+bin/
+obj/
+
+# Published web site (scripts/publish-web.sh)
+dist/

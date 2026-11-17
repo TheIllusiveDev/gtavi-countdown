@@ -1,0 +1,66 @@
+@implements IAsyncDisposable
+@inject BrowserInterop Browser
+
+<div class="backdrop" style="background: @Themes.Info[Theme].Fallback" aria-hidden="true">
+    @if (Effects != EffectLevel.Off)
+    {
+        <canvas @ref="_canvas" class="@(_live ? "live" : null)"></canvas>
+    }
+    <div class="scrim"></div>
+</div>
+
+@code {
+    private ElementReference _canvas;
+    /// <summary>True once a renderer was attempted on the current canvas.</summary>
+    private bool _mounted;
+    /// <summary>False until a GL context exists; the CSS gradient shows through meanwhile.</summary>
+    private bool _live;
+    private (Theme, EffectLevel) _applied;
+
+    [Parameter] public Theme Theme { get; set; }
+
+    [Parameter] public EffectLevel Effects { get; set; }
+
+    // The renderer is created when effects are enabled and torn down when they
+    // are switched off, so that no GPU memory or context is held needlessly.
+    // A theme change does not rebuild the context; it only swaps the palette.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var palette = Themes.Info[Theme].Palette;
+        if (Effects == EffectLevel.Off)
+        {
+            if (_mounted)
+            {
+                _mounted = false;
+                _live = false;
+                await Browser.UnmountBackdropAsync();
+            }
+            return;
+        }
+
+        if (!_mounted)
+        {
+            _mounted = true;
+            _applied = (Theme, Effects);
+            _live = await Browser.MountBackdropAsync(_canvas, palette, Effects);
+            if (_live) StateHasChanged();
+        }
+        else if (_applied != (Theme, Effects))
+        {
+            _applied = (Theme, Effects);
+            await Browser.UpdateBackdropAsync(palette, Effects);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_mounted) return;
+        try
+        {
+            await Browser.UnmountBackdropAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+}
