@@ -1,6 +1,10 @@
 # GTA VI Countdown
 
-A fast, animated countdown to the release of Grand Theft Auto VI on November 19, 2026. It runs in any modern browser and ships as a native desktop application built with Tauri.
+A fast, animated countdown to the release of Grand Theft Auto VI on November 19, 2026. The same countdown is built three times, from one design:
+
+- **The original**, in Svelte and TypeScript. It runs in any modern browser and ships as a native desktop application built with Tauri.
+- **A C# port**, in Blazor on .NET 10. It runs in the browser on WebAssembly and on the desktop in a Photino window.
+- **A C++ port**, a native GTK 4 desktop application for Linux with no web view.
 
 ![The countdown in the Dusk theme](docs/screenshot.jpg)
 
@@ -9,10 +13,12 @@ A fast, animated countdown to the release of Grand Theft Auto VI on November 19,
 
 ## Features
 
+Every version has the same features and wording, unless noted.
+
 - **Accurate to the millisecond.** The display is derived from the wall clock on every tick, so it cannot drift, and each tick is scheduled on the exact boundary where the seconds value changes.
 - **Time zone aware.** The game unlocks at midnight local time, so the release moment differs by region. The countdown follows the device's time zone by default and can be pointed at any IANA zone.
-- **Network time correction.** The desktop application measures the error of the system clock against an NTP server and corrects the countdown, using an SNTP client written in Rust with no dependencies.
-- **Animated backdrop.** A sunset skyline rendered in a single WebGL fragment shader. It lowers its own resolution when the frame rate drops, pauses when the window is hidden and falls back to a static gradient when WebGL is unavailable.
+- **Network time correction.** The desktop applications measure the error of the system clock against an NTP server and correct the countdown. Each version has its own SNTP client with no third-party dependencies.
+- **Animated backdrop.** A sunset skyline rendered in a single fragment shader. It lowers its own resolution when the frame rate drops, pauses when the window is hidden and falls back to a static gradient when the GPU is unavailable.
 - **Three themes.** Dusk, Midnight and Dawn.
 - **More than one way to count.** Sleeps, weekends and total hours, minutes and seconds remaining, with a timeline of the wait since the first trailer.
 - **Release alert.** An optional system notification at the moment of release.
@@ -25,23 +31,29 @@ A fast, animated countdown to the release of Grand Theft Auto VI on November 19,
 | --- | --- |
 | ![The Midnight theme](docs/screenshot-midnight.jpg) | ![The Dawn theme](docs/screenshot-dawn.jpg) |
 
-## Technology
+## Implementations
 
-| Layer | Choice |
-| --- | --- |
-| Runtime and package manager | [Bun](https://bun.sh) |
-| User interface | [Svelte 5](https://svelte.dev) with TypeScript |
-| Build tool | [Vite 8](https://vite.dev) |
-| Graphics | WebGL 1, hand-written GLSL |
-| Desktop shell | [Tauri 2](https://tauri.app) (Rust) |
-| Tests | `bun test` and `cargo test` |
+| | Original | C# port | C++ port |
+| --- | --- | --- | --- |
+| Directory | repository root | [`csharp/`](csharp/) | [`cpp/`](cpp/) |
+| Language | TypeScript, Rust | C# | C++23 |
+| User interface | [Svelte 5](https://svelte.dev) | [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) | [GTK 4](https://gtk.org) through [gtkmm](https://gtkmm.org) |
+| Web | static site built with [Vite 8](https://vite.dev) | Blazor WebAssembly static site | none |
+| Desktop | [Tauri 2](https://tauri.app) | [Photino.Blazor](https://github.com/tryphotino/photino.Blazor) | native GTK window |
+| Graphics | WebGL 1 | WebGL 1 | OpenGL 3.2 or OpenGL ES 3.0 |
+| Build and tests | [Bun](https://bun.sh), Cargo | `dotnet`, xUnit | [Meson](https://mesonbuild.com), GoogleTest |
+| Platforms | browsers; Linux, Windows, macOS | browsers; Linux, Windows, macOS | Linux |
 
-## Requirements
+All three store settings in the same JSON format. The two web builds read each other's settings when served from the same origin, and the C# and C++ desktop applications share one settings file. [DOCUMENTATION.md](DOCUMENTATION.md) explains how the ports map onto the original.
+
+## The original (Svelte and Tauri)
+
+### Requirements
 
 - [Bun](https://bun.com/docs/installation) 1.4 or later. Install it with `curl -fsSL https://bun.com/install | bash`, or see the [installation guide](https://bun.com/docs/installation) for other methods.
 - For the desktop application only: a Rust toolchain (1.77.2 or later) and the Tauri system dependencies for your platform. The commands under [System dependencies](#system-dependencies) install both.
 
-## Getting started
+### Getting started
 
 ```sh
 bun install
@@ -59,7 +71,7 @@ bun run preview
 
 The output in `dist/` is a static site. It uses relative asset URLs and can be served from any path on any static host.
 
-## Deploying to Cloudflare Pages
+### Deploying to Cloudflare Pages
 
 **From the command line.** Log in once, then build and upload in one step:
 
@@ -82,8 +94,6 @@ The first deploy creates a Pages project named `gtavi-countdown` (set in `wrangl
 `public/_headers` is copied into the build and sets the content security policy, long-lived caching for the hashed files in `assets/`, and a few security headers.
 
 The site also works as an installable web app: it ships a web manifest and home-screen icons for iOS and Android.
-
-## Desktop application
 
 ### System dependencies
 
@@ -140,7 +150,7 @@ Install the Xcode Command Line Tools with `xcode-select --install`, then Rust wi
 
 On any platform, [rustup](https://rustup.rs) is an alternative to the distribution's Rust packages and always provides the latest stable toolchain. The Tauri documentation keeps the authoritative list of [prerequisites](https://tauri.app/start/prerequisites/).
 
-### Running and building
+### Desktop application
 
 ```sh
 bun run desktop:dev      # development window with hot reload
@@ -149,7 +159,7 @@ bun run desktop:build    # optimised binary and installers
 
 Build artefacts are written to `src-tauri/target/release/`, with installers under `bundle/`. To build a single package format, pass it to the Tauri CLI, for example `bun tauri build --bundles deb`.
 
-## Scripts
+### Scripts
 
 | Command | Purpose |
 | --- | --- |
@@ -162,6 +172,100 @@ Build artefacts are written to `src-tauri/target/release/`, with installers unde
 | `bun run desktop:build` | Build the desktop application for release. |
 
 The Rust tests are run from the `src-tauri` directory with `cargo test --workspace`.
+
+## The C# port (Blazor and Photino)
+
+### Requirements
+
+- The [.NET SDK 10](https://dotnet.microsoft.com/download).
+- For the desktop application on Linux: WebKitGTK 4.1 and libnotify's `notify-send`, the same libraries the Tauri build uses.
+  - Fedora: `sudo dnf install webkit2gtk4.1 libnotify`
+  - Debian and Ubuntu: `sudo apt install libwebkit2gtk-4.1-0 libnotify-bin`
+  - Arch: `sudo pacman -S webkit2gtk-4.1 libnotify`
+
+### Commands
+
+Run these from `csharp/`.
+
+```sh
+dotnet test                                       # build everything and run the tests
+dotnet run --project src/GtaviCountdown.Web       # web app on http://localhost:1420
+dotnet run --project src/GtaviCountdown.Desktop   # desktop app
+```
+
+### Publishing the web app
+
+```sh
+scripts/publish-web.sh            # writes the static site to dist/site
+bunx wrangler pages deploy dist/site --project-name gtavi-countdown
+```
+
+The output is a static site with relative URLs and can be served from any path. The script is needed because the build writes an import map inline into `index.html`; the content security policy in `_headers` allows that script by its SHA-256 hash, which only exists after the build, so the script fills it in.
+
+### Publishing the desktop app
+
+```sh
+dotnet publish src/GtaviCountdown.Desktop -c Release -r linux-x64 --self-contained
+```
+
+Use `win-x64` or `osx-arm64` for other platforms. The `gtavi-countdown` executable is in `src/GtaviCountdown.Desktop/bin/Release/net10.0/<rid>/publish/`.
+
+## The C++ port (GTK 4)
+
+### Requirements
+
+- A C++23 compiler: GCC 14 or later, or a Clang with the same library support. The time zone code needs the `<chrono>` time zone database.
+- Meson 1.3 or later and Ninja.
+- gtkmm 4.14 or later, GTK 4.16 or later, libepoxy and nlohmann/json 3.11 or later.
+- Optional: GoogleTest for the tests, and Xlib for the always-on-top option on X11.
+
+**Fedora**
+
+```sh
+sudo dnf install gcc-c++ meson ninja-build gtkmm4.0-devel libepoxy-devel \
+  json-devel gtest-devel libX11-devel
+```
+
+**Debian 13, Ubuntu 25.04 and later**
+
+```sh
+sudo apt install g++ meson ninja-build libgtkmm-4.0-dev libepoxy-dev \
+  nlohmann-json3-dev libgtest-dev libx11-dev
+```
+
+**Arch Linux**
+
+```sh
+sudo pacman -S --needed base-devel meson gtkmm-4.0 libepoxy nlohmann-json gtest libx11
+```
+
+Older distributions ship a gtkmm or GTK that is too old; Meson reports which one.
+
+### Commands
+
+Run these from `cpp/`.
+
+```sh
+meson setup build              # configure once
+ninja -C build                 # build the app and the tests
+meson test -C build            # run the tests
+build/gtavi-countdown          # run from the build directory
+sudo meson install -C build    # install to /usr/local
+```
+
+The app finds its fonts in the source tree when run from the build directory, and in the installed data directory otherwise. Build options are in `meson.options`: `-Dapp=false` builds only the core library and the tests, `-Dtests=disabled` skips the tests, and `-Dx11=disabled` drops the X11 support.
+
+## Settings and files
+
+The web builds keep settings in the browser's local storage. The desktop applications store them as follows:
+
+| Version | Settings | Window |
+| --- | --- | --- |
+| Tauri | the web view's local storage | size and position, by the window-state plugin |
+| C# | `~/.config/gtavi-countdown/settings.json` (`%APPDATA%\gtavi-countdown\` on Windows) | size and position, in `window-state.json` |
+| C++ | `~/.config/gtavi-countdown/settings.json` | size only, in `window-state.json` |
+
+Calendar files are saved to the download folder (on Linux, the one set in `user-dirs.dirs`), falling back to the documents folder and then the home folder.
 
 ## Keyboard shortcuts
 
@@ -178,34 +282,47 @@ The Rust tests are run from the `src-tauri` directory with `cargo test --workspa
 
 ```text
 .
-├── index.html              Application shell
-├── src/
-│   ├── App.svelte          Root component: layout, actions, shortcuts
-│   ├── app.css             Fonts, design tokens and global styles
+├── index.html                  Application shell (original)
+├── src/                        Web application (Svelte)
+│   ├── App.svelte              Root component: layout, actions, shortcuts
+│   ├── app.css                 Fonts, design tokens and global styles
 │   └── lib/
-│       ├── components/     User interface components
-│       ├── gl/             WebGL renderer and shader source
-│       ├── time/           Release data, time zone maths and the clock
-│       ├── ics.ts          iCalendar writer
-│       ├── platform.ts     Bridge between the web app and the desktop shell
-│       ├── settings.ts     Settings schema and validation
-│       └── themes.ts       Colour palettes
-├── tests/                  Unit tests for the TypeScript modules
-├── src-tauri/              Desktop shell (Rust)
-│   ├── src/                Application entry point and commands
-│   ├── crates/timesync/    SNTP client
-│   ├── capabilities/       Permissions granted to the window
-│   └── tauri.conf.json     Window, security and bundling configuration
-└── docs/                   Screenshots
+│       ├── components/         User interface components
+│       ├── gl/                 WebGL renderer and shader source
+│       ├── time/               Release data, time zone maths and the clock
+│       ├── ics.ts              iCalendar writer
+│       ├── platform.ts         Bridge between the web app and the desktop shell
+│       ├── settings.ts         Settings schema and validation
+│       └── themes.ts           Colour palettes
+├── tests/                      Unit tests for the TypeScript modules
+├── src-tauri/                  Desktop shell (Rust)
+│   ├── src/                    Application entry point and commands
+│   ├── crates/timesync/        SNTP client
+│   ├── capabilities/           Permissions granted to the window
+│   └── tauri.conf.json         Window, security and bundling configuration
+├── csharp/                     C# port
+│   ├── src/GtaviCountdown.Core/      Logic, time zones, SNTP client
+│   ├── src/GtaviCountdown.UI/        Razor components, CSS, WebGL backdrop
+│   ├── src/GtaviCountdown.Web/       WebAssembly host
+│   ├── src/GtaviCountdown.Desktop/   Photino host
+│   ├── tests/GtaviCountdown.Tests/   xUnit tests
+│   └── scripts/publish-web.sh        Static site build for Cloudflare Pages
+├── cpp/                        C++ port
+│   ├── src/core/               Logic, time zones, SNTP client (no GTK)
+│   ├── src/app/                GTK 4 application
+│   ├── data/                   Stylesheet, shaders, fonts, icon, desktop entry
+│   ├── tests/                  GoogleTest tests
+│   └── meson.build             Build definition
+└── docs/                       Screenshots
 ```
 
 ## Documentation
 
-[DOCUMENTATION.md](DOCUMENTATION.md) covers the architecture, the timekeeping model, the rendering pipeline, the desktop shell, configuration, testing and troubleshooting.
+[DOCUMENTATION.md](DOCUMENTATION.md) covers the architecture of all three versions, the timekeeping model, rendering, the desktop shells, settings, testing, troubleshooting and known limitations.
 
 ## The release time
 
-Rockstar Games has announced the date. The unlock hour used here, midnight local time in each region, is the timing reported at the time of writing and may change. The date and hour are defined in one place, [src/lib/time/release.ts](src/lib/time/release.ts).
+Rockstar Games has announced the date. The unlock hour used here, midnight local time in each region, is the timing reported at the time of writing and may change. Each version defines the date and hour in one place: [src/lib/time/release.ts](src/lib/time/release.ts), [csharp/src/GtaviCountdown.Core/Release.cs](csharp/src/GtaviCountdown.Core/Release.cs) and [cpp/src/core/release.hpp](cpp/src/core/release.hpp).
 
 ## Disclaimer
 

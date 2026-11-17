@@ -1,0 +1,3 @@
+option('app', type: 'boolean', value: true, description: 'Build the GTK 4 desktop app')
+option('tests', type: 'feature', value: 'auto', description: 'Build the GoogleTest suite')
+option('x11', type: 'feature', value: 'auto', description: 'Support "always on top" on X11')
