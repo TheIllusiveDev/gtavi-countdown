@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-  <gresource prefix="/app/gtavi/countdown">
-    <file>style.css</file>
-    <file>scene.vert</file>
-    <file>scene.frag</file>
-    <file alias="brand.svg">icons/app.gtavi.countdown.svg</file>
-  </gresource>
-</gresources>

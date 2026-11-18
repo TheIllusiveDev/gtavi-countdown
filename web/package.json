@@ -1,0 +1,32 @@
+{
+  "name": "gtavi-countdown",
+  "version": "2.0.0",
+  "description": "A fast, animated countdown to the release of Grand Theft Auto VI and other upcoming games, for the web.",
+  "license": "Unlicense",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "pages:dev": "vite build && wrangler pages dev",
+    "deploy": "vite build && wrangler pages deploy",
+    "check": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "^6.0.0",
+    "vite": "^8.3.8",
+    "wrangler": "^4.161.0"
+  }
+}

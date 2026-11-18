@@ -1,0 +1,26 @@
+[package]
+name = "gtavi-countdown"
+description = "A fast, animated countdown to the release of Grand Theft Auto VI and other games, as a native Rust application."
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+gtavi-core = { path = "../core" }
+timesync = { path = "../timesync" }
+eframe = { version = "0.37", default-features = false, features = [
+    "accesskit",
+    "clipboard",
+    "default_fonts",
+    "wgpu",
+    "wayland",
+    "x11",
+] }
+dirs = "7"
+# Encodes the screenshot that GTAVI_COUNTDOWN_SCREENSHOT asks for.
+image = { version = "0.25", default-features = false, features = ["png"] }
+notify-rust = "4"
+raw-window-handle = "0.6"
+serde_json = "1"

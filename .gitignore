@@ -4,9 +4,8 @@ node_modules/
 # Frontend build output
 dist/
 
-# Rust and Tauri build output
-src-tauri/target/
-src-tauri/gen/
+# Rust build output
+desktop/target/
 
 # Logs
 *.log

@@ -1,0 +1,42 @@
+.cell {
+  display: inline-grid;
+  width: 0.5em;
+  height: 1em;
+  line-height: 1;
+  /* The cell has a fixed size, so its content can never affect the layout
+     around it. Paint is deliberately not contained: the glyph fades as it
+     travels, and clipping it would cut the text shadow into a visible box. */
+  contain: size layout style;
+}
+
+.glyph {
+  grid-area: 1 / 1;
+  display: block;
+  text-align: center;
+  backface-visibility: hidden;
+}
+
+/* cubic-bezier(0.33, 1, 0.68, 1) is the cubic ease-out. */
+.in {
+  animation: roll-in 460ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  will-change: transform, opacity;
+}
+
+.out {
+  animation: roll-out 460ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes roll-in {
+  from {
+    transform: translate3d(0, -58%, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes roll-out {
+  to {
+    transform: translate3d(0, 58%, 0);
+    opacity: 0;
+  }
+}

@@ -1,0 +1,128 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 11px;
+  height: 38px;
+  border-radius: var(--radius-small);
+  background: rgb(255 255 255 / 0.07);
+  border: 1px solid var(--line);
+  color: var(--ink-faint);
+}
+
+.search:focus-within {
+  border-color: var(--accent);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--ink);
+  font-size: 0.875rem;
+}
+
+.input::placeholder {
+  color: var(--ink-faint);
+}
+
+.list {
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  height: 216px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--radius-small);
+  border: 1px solid var(--line);
+  background: rgb(0 0 0 / 0.18);
+}
+
+.item {
+  /* Rows far outside the scroll viewport skip layout and paint. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 36px;
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 36px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  text-align: left;
+}
+
+@media (hover: hover) {
+  .option:hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+}
+
+/* iOS zooms the page into any focused field under 16px. */
+@media (pointer: coarse) {
+  .input {
+    font-size: 16px;
+  }
+
+  .search {
+    height: 44px;
+  }
+
+  .option {
+    min-height: 44px;
+  }
+}
+
+.option[aria-pressed="true"] {
+  background: rgb(255 255 255 / 0.14);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.name {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.city {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.region {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.offset {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--ink-soft);
+}
+
+.empty {
+  padding: 14px 9px;
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+}

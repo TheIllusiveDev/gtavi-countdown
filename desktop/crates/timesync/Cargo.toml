@@ -1,0 +1,10 @@
+[package]
+name = "timesync"
+description = "A dependency-free SNTP client that measures the offset of the system clock."
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
